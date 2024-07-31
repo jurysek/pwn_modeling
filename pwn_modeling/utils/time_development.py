@@ -1,11 +1,9 @@
 import astropy.units as u
 import numpy as np
 from astropy.constants import astropyconst20 as const
-import sys
-sys.path.append('/Users/jakub/science/software/GAMERA/lib/')
 import gappa as gp
 
-def development(power_law_spectrum, age, t, snr, pwn):
+def development(power_law_spectrum, age, t, snr, pwn, distance):
 
     # Setup gamera Particle object
     fp = gp.Particles()
@@ -13,9 +11,13 @@ def development(power_law_spectrum, age, t, snr, pwn):
 
     # Adding IC photon fields
     # CMB
-    u_rad = 4.17 * 10**-13
-    temperature = 2.726
-    fp.AddThermalTargetPhotons(temperature, u_rad) #in K, erg/cm^3.
+    u_cmb = 4.17 * 10**-13
+    t_cmb = 2.726
+    fp.AddThermalTargetPhotons(t_cmb, u_cmb) #in K, erg/cm^3.
+
+    # FIR
+    t_fir = 20; u_fir = 0.3 * gp.eV_to_erg
+    fp.AddThermalTargetPhotons(t_fir,u_fir)
 
     # Adding lists of environmental variables for time development
     tim = t.to_value(u.yr)
@@ -51,9 +53,8 @@ def development(power_law_spectrum, age, t, snr, pwn):
     fr.SetBField(b)
 
     #fr.SetAmbientDensity(density)
-    distance = 1e3 # optional, in parsec. If not set or equals zero, differential
-                   # photon production rate instead of flux will be calculated
-    fr.SetDistance(distance)
+    if distance is not None:
+        fr.SetDistance(distance)
     fr.SetElectrons(sp)
     # define energies at which gamma-ray emission should be calculated
     eg = np.logspace(3,16,1000) * gp.eV_to_erg
@@ -69,5 +70,5 @@ def development(power_law_spectrum, age, t, snr, pwn):
 
     return sp, p_sed, tot, ic, synch, total_radiated_energy
 
-def run_particle_developemnt(power_law_spectrum, age, t, snr, pwn):
-    return age, development(power_law_spectrum, age, t, snr, pwn)
+def run_particle_developemnt(power_law_spectrum, age, t, snr, pwn, distance):
+    return age, development(power_law_spectrum, age, t, snr, pwn, distance)
