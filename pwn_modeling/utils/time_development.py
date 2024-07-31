@@ -3,21 +3,31 @@ import numpy as np
 from astropy.constants import astropyconst20 as const
 import gappa as gp
 
-def development(power_law_spectrum, age, t, snr, pwn, distance):
+
+class Radiation_fields:
+
+    def __init__(self):
+
+        self.photon_fields = {}
+
+    def add_field(self, name='', temperature=None, energy_density=None):
+
+        self.photon_fields[name] = {'temp': temperature, 'edens': energy_density}
+
+
+def development(power_law_spectrum, age, t, snr, pwn, rad_fields, distance):
 
     # Setup gamera Particle object
     fp = gp.Particles()
     fp.SetCustomInjectionSpectrum(power_law_spectrum)
 
     # Adding IC photon fields
-    # CMB
-    u_cmb = 4.17 * 10**-13
-    t_cmb = 2.726
-    fp.AddThermalTargetPhotons(t_cmb, u_cmb) #in K, erg/cm^3.
+    for name in rad_fields.photon_fields:
 
-    # FIR
-    t_fir = 20; u_fir = 0.3 * gp.eV_to_erg
-    fp.AddThermalTargetPhotons(t_fir,u_fir)
+        fp.AddThermalTargetPhotons(
+            rad_fields.photon_fields[name]['temp'],
+            rad_fields.photon_fields[name]['edens']
+            )
 
     # Adding lists of environmental variables for time development
     tim = t.to_value(u.yr)
@@ -70,5 +80,5 @@ def development(power_law_spectrum, age, t, snr, pwn, distance):
 
     return sp, p_sed, tot, ic, synch, total_radiated_energy
 
-def run_particle_developemnt(power_law_spectrum, age, t, snr, pwn, distance):
-    return age, development(power_law_spectrum, age, t, snr, pwn, distance)
+def run_particle_developemnt(power_law_spectrum, age, t, snr, pwn, rad_fields, distance):
+    return age, development(power_law_spectrum, age, t, snr, pwn, rad_fields, distance)
