@@ -1,4 +1,4 @@
-name: pwn-modeling-0.1.0
+name: pwn-modeling-0.1.1
 channels:
   - astropy
   - defaults

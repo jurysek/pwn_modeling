@@ -5,7 +5,7 @@ Code for modeling of Pulsar Wind Nebula development in time-dependent environmen
 - install GAMERA, following instructions on https://libgamera.github.io/GAMERA/docs/download_installation.html
 - instal PWN modeling package following instructions below
 ```
-PWN_VER=0.1.0
+PWN_VER=0.1.1
 
 git clone git@github.com:jurysek/pwn_modeling.git
 cd pwn_modeling

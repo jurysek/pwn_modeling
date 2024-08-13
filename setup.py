@@ -4,7 +4,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    version="0.1.0",
+    version="0.1.1",
     packages=find_packages(),
     install_requires=[
         'gammapy~=1.2',
